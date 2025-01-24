@@ -23,8 +23,8 @@ public class LConstants {
         FollowerConstants.rightFrontMotorDirection = DcMotorSimple.Direction.FORWARD;
         FollowerConstants.rightRearMotorDirection = DcMotorSimple.Direction.FORWARD;
 
-        PinpointConstants.forwardY = 1;//need to change foward pod
-        PinpointConstants.strafeX = -2.5;//need to change straffe pod
+        PinpointConstants.forwardY = 7.73;//need to change foward pod
+        PinpointConstants.strafeX = 7;//need to change straffe pod
         PinpointConstants.distanceUnit = DistanceUnit.INCH;
         PinpointConstants.hardwareMapName = "pinpoint";
         PinpointConstants.useYawScalar = false;
