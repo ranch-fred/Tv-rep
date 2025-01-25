@@ -38,6 +38,10 @@ public class Tele extends LinearOpMode {
     Servo lm; // left misumi slide
     Servo rm; // right misumi slide
 
+    Servo Blm;//back left misumi
+
+    Servo Brm;//back right misumi
+
     @Override
     public void runOpMode() throws InterruptedException {
         DcMotor leftFront = hardwareMap.get(DcMotor.class, "leftFront");
@@ -46,8 +50,10 @@ public class Tele extends LinearOpMode {
         DcMotor rightRear = hardwareMap.get(DcMotor.class, "rightRear");
 
         // Initialize slide motors
-        DcMotor back = hardwareMap.get(DcMotor.class, "back");
-        DcMotor li = hardwareMap.get(DcMotor.class, "lr");
+        DcMotor Lback = hardwareMap.get(DcMotor.class, "lback");//left back misumi motor
+        DcMotor rBack = hardwareMap.get(DcMotor.class,"rback");//right back misumi motor
+        DcMotor Lli = hardwareMap.get(DcMotor.class, "Lli");//lef linkage
+        DcMotor Rli = hardwareMap.get(DcMotor.class,"Rli");//right linkage
         // Init servos
         bc = hardwareMap.get(Servo.class, "bc");
 
@@ -63,17 +69,17 @@ public class Tele extends LinearOpMode {
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        back.setDirection(DcMotorSimple.Direction.REVERSE);
-        back.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        back.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        Lback.setDirection(DcMotorSimple.Direction.REVERSE);
+        Lback.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        Lback.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        li.setDirection(DcMotorSimple.Direction.REVERSE);
-        li.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        li.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        Lli.setDirection(DcMotorSimple.Direction.REVERSE);
+        Lli.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        Lli.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // Ensure motor resists motion when idle
-        li.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        back.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        Lli.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        Lback.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -86,6 +92,7 @@ public class Tele extends LinearOpMode {
         if (isStopRequested()) return;
 
         while (opModeIsActive()) {
+
             switch (currentState) {
                 case HOME:
                     intakeTarget = intakeIn;
@@ -152,11 +159,17 @@ public class Tele extends LinearOpMode {
             rightFront.setPower(rightFrontPower);
             rightRear.setPower(rightRearPower);
 
-            back.setPower(outtakePid(outtakeTarget, back.getCurrentPosition()));
-            li.setPower(intakePid(intakeTarget, li.getCurrentPosition()));
+            Lback.setPower(outtakePid(outtakeTarget, Lback.getCurrentPosition()));
+            rBack.setPower(-outtakePid(outtakeTarget,rBack.getCurrentPosition()));
 
-            telemetry.addData("Back Slides Position: ", back.getCurrentPosition());
-            telemetry.addData("Intake Slides Position: ", li.getCurrentPosition());
+            Lli.setPower(intakePid(intakeTarget, Lli.getCurrentPosition()));
+            Rli.setPower(-intakePid(intakeTarget,Rli.getCurrentPosition()));
+
+
+            telemetry.addData("Back left Slides Position: ", Lback.getCurrentPosition());
+            telemetry.addData("Intake left Slides Position: ", Lli.getCurrentPosition());
+            telemetry.addData("Back right Slides Position: ", rBack.getCurrentPosition());
+            telemetry.addData("Intake right Slides Position: ", Rli.getCurrentPosition());
             telemetry.addData("State: ", currentState);
             telemetry.update();
         }
@@ -173,16 +186,29 @@ public class Tele extends LinearOpMode {
 
     // method cult
     public void transferClaw() {
-        bc.setPosition(-1.0);
+        Blm.setPosition(-1.0);
+        Brm.setPosition(-1.0);
     }
 
     public void specClaw() {
-        bc.setPosition(0.5);
+        Blm.setPosition(0.5);
+        Brm.setPosition(0.5);
     }
 
+
     public void sampClaw(){
+        Blm.setPosition(-1.0);
+        Brm.setPosition(-1.0);
+    }
+
+    public void closeClaw(){
         bc.setPosition(1.0);
     }
+
+    public void openClaw(){
+        bc.setPosition(-1.0);
+    }
+
 
     public void intakeSample() {
         fl.setPower(-1.0);
@@ -234,6 +260,13 @@ public class Tele extends LinearOpMode {
         else if (gamepad2.dpad_left){
           sampClaw();
         }
+    }
+
+    public void Claw(Gamepad gamepad){
+        if(gamepad2.dpad_left)
+            closeClaw();
+        else
+            openClaw();
     }
 
     public void controlSample(Gamepad gamepad) {

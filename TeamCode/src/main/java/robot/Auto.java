@@ -11,12 +11,34 @@ import com.pedropathing.util.Timer;
 import com.pedropathing.util.Constants;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import pedroPathing.constants.FConstants;
 import pedroPathing.constants.LConstants;
 
 @Autonomous(name = "Sample Side Auto")
 public class Auto extends OpMode {
+
+
+
+    Servo bc; // back claw
+    CRServo fl; // front left gecko
+    CRServo fr; // front right gecko
+    CRServo wrist; // wrist pivot point
+    Servo lm; // left misumi slide
+    Servo rm; // right misumi slide
+
+    Servo Blm;//back left misumi
+
+    Servo Brm;//back right misumi
+
+
+
+
+
+
+
 
     private Follower follower;
     private Timer pathTimer, actionTimer, opmodeTimer;
@@ -221,6 +243,9 @@ public class Auto extends OpMode {
     public void init_loop() {
 
     }
+
+
+
 
     @Override
     public void start() {
